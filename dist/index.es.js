@@ -9930,7 +9930,7 @@ var CornerstoneViewport = /*#__PURE__*/function (_Component) {
                     cornerstoneTools.playClip(this.element, validFrameRate);
                   }
                   _addAndConfigureInitialToolsForElement(tools, this.element);
-                  _trySetActiveTool(this.element, this.props.activeTool);
+                  _trySetActiveTool(this.element, this.props.activeTool, tools);
                   this.setState({
                     isLoading: false
                   });
@@ -9957,7 +9957,7 @@ var CornerstoneViewport = /*#__PURE__*/function (_Component) {
     value: function () {
       var _componentDidUpdate = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(prevProps, prevState) {
         var _this3 = this;
-        var _this$props2, stack, imageIndex, isStackPrefetchEnabled, initialViewport, prevStack, prevImageIndex, prevIsStackPrefetchEnabled, hasStackChanged, hasImageIndexChanged, updatedState, imageId, requestFn, shouldStopStartStackPrefetch, activeTool, prevActiveTool, hasActiveToolChanges, _this$props3, frameRate, isPlaying, isOverlayVisible, prevFrameRate, prevIsPlaying, prevIsOverlayVisible, validFrameRate, shouldStart, shouldPause, hasFrameRateChanged;
+        var _this$props2, stack, imageIndex, isStackPrefetchEnabled, initialViewport, prevStack, prevImageIndex, prevIsStackPrefetchEnabled, hasStackChanged, hasImageIndexChanged, updatedState, imageId, requestFn, shouldStopStartStackPrefetch, _this$props3, activeTool, tools, prevActiveTool, hasActiveToolChanges, _this$props4, frameRate, isPlaying, isOverlayVisible, prevFrameRate, prevIsPlaying, prevIsOverlayVisible, validFrameRate, shouldStart, shouldPause, hasFrameRateChanged;
         return regenerator.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -10009,15 +10009,15 @@ var CornerstoneViewport = /*#__PURE__*/function (_Component) {
                 }
 
                 // ~~ ACTIVE TOOL
-                activeTool = this.props.activeTool;
+                _this$props3 = this.props, activeTool = _this$props3.activeTool, tools = _this$props3.tools;
                 prevActiveTool = prevProps.activeTool;
                 hasActiveToolChanges = activeTool !== prevActiveTool;
                 if (hasActiveToolChanges) {
-                  _trySetActiveTool(this.element, activeTool);
+                  _trySetActiveTool(this.element, activeTool, tools);
                 }
 
                 // ~~ CINE
-                _this$props3 = this.props, frameRate = _this$props3.frameRate, isPlaying = _this$props3.isPlaying, isOverlayVisible = _this$props3.isOverlayVisible;
+                _this$props4 = this.props, frameRate = _this$props4.frameRate, isPlaying = _this$props4.isPlaying, isOverlayVisible = _this$props4.isOverlayVisible;
                 prevFrameRate = prevProps.frameRate, prevIsPlaying = prevProps.isPlaying, prevIsOverlayVisible = prevProps.isOverlayVisible;
                 validFrameRate = Math.max(frameRate, 1);
                 shouldStart = isPlaying !== prevIsPlaying && isPlaying || isPlaying && hasStackChanged;
@@ -10100,9 +10100,9 @@ var CornerstoneViewport = /*#__PURE__*/function (_Component) {
   }, {
     key: "getOverlay",
     value: function getOverlay() {
-      var _this$props4 = this.props,
-        Component = _this$props4.viewportOverlayComponent,
-        imageIds = _this$props4.imageIds;
+      var _this$props5 = this.props,
+        Component = _this$props5.viewportOverlayComponent,
+        imageIds = _this$props5.imageIds;
       var _this$state2 = this.state,
         imageIdIndex = _this$state2.imageIdIndex,
         scale = _this$state2.scale,
@@ -10129,9 +10129,9 @@ var CornerstoneViewport = /*#__PURE__*/function (_Component) {
   }, {
     key: "getOrientationMarkersOverlay",
     value: function getOrientationMarkersOverlay() {
-      var _this$props5 = this.props,
-        imageIds = _this$props5.imageIds,
-        orientationMarkers = _this$props5.orientationMarkers;
+      var _this$props6 = this.props,
+        imageIds = _this$props6.imageIds,
+        orientationMarkers = _this$props6.orientationMarkers;
       var _this$state3 = this.state,
         imageIdIndex = _this$state3.imageIdIndex,
         rotationDegrees = _this$state3.rotationDegrees,
@@ -10489,7 +10489,7 @@ _defineProperty$w(CornerstoneViewport, "defaultProps", {
   onNewImageDebounceTime: 0,
   orientationMarkers: ['top', 'left']
 });
-function _trySetActiveTool(element, activeToolName) {
+function _trySetActiveTool(element, activeToolName, tools) {
   if (!element || !activeToolName) {
     return;
   }
@@ -10502,7 +10502,10 @@ function _trySetActiveTool(element, activeToolName) {
   if (!validToolNames.includes(activeToolName)) {
     console.warn("Trying to set a tool active that is not \"added\". Available tools include: ".concat(validToolNames.join(', ')));
   }
-  cornerstoneTools.setToolActiveForElement(element, activeToolName, {
+  var tool = tools.find(function (t) {
+    return t.name === activeToolName;
+  });
+  cornerstoneTools.setToolActiveForElement(element, activeToolName, (tool === null || tool === void 0 ? void 0 : tool.modeOptions) || {
     mouseButtonMask: 1
   });
 }

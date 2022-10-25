@@ -223,7 +223,7 @@ class CornerstoneViewport extends Component {
       }
 
       _addAndConfigureInitialToolsForElement(tools, this.element);
-      _trySetActiveTool(this.element, this.props.activeTool);
+      _trySetActiveTool(this.element, this.props.activeTool, tools);
       this.setState({ isLoading: false });
     } catch (error) {
       this.setState({ error, isLoading: false });
@@ -300,12 +300,12 @@ class CornerstoneViewport extends Component {
     }
 
     // ~~ ACTIVE TOOL
-    const { activeTool } = this.props;
+    const { activeTool, tools } = this.props;
     const { activeTool: prevActiveTool } = prevProps;
     const hasActiveToolChanges = activeTool !== prevActiveTool;
 
     if (hasActiveToolChanges) {
-      _trySetActiveTool(this.element, activeTool);
+      _trySetActiveTool(this.element, activeTool, tools);
     }
 
     // ~~ CINE
@@ -820,7 +820,7 @@ class CornerstoneViewport extends Component {
  * @param {string} activeToolName
  * @returns
  */
-function _trySetActiveTool(element, activeToolName) {
+function _trySetActiveTool(element, activeToolName, tools) {
   if (!element || !activeToolName) {
     return;
   }
@@ -838,7 +838,9 @@ function _trySetActiveTool(element, activeToolName) {
     );
   }
 
-  cornerstoneTools.setToolActiveForElement(element, activeToolName, {
+  const tool = tools.find((t) => t.name === activeToolName)
+
+  cornerstoneTools.setToolActiveForElement(element, activeToolName, tool?.modeOptions || {
     mouseButtonMask: 1,
   });
 }
@@ -878,6 +880,7 @@ function _addAndConfigureInitialToolsForElement(tools, element) {
       // to determine the name it registered with cornerstone. `tool.name` is not
       // reliable.
       const setToolModeFn = TOOL_MODE_FUNCTIONS[tool.mode];
+
       setToolModeFn(element, tool.name, tool.modeOptions || {});
     }
   }
