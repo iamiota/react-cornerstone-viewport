@@ -183,6 +183,7 @@ class CornerstoneViewport extends Component {
         'stack',
         'playClip',
         'referenceLines',
+        'Crosshairs',
       ]);
       cornerstoneTools.addToolState(this.element, 'stack', {
         imageIds: [...imageIds],
